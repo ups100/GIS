@@ -1,0 +1,96 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[]{polski}
+\usepackage{a4wide}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{longtable}
+
+\title{{\textbf{Grafy i Sieci}}\\[1ex]
+       {\Large Sprawozdanie 1}\\[-1ex]
+       {\Large Projekt - Graf częściowo spójne}}
+\author{Krzysztof Opasiak, Adrian Brzozowski}
+
+% Kropka po numerze paragrafu, podparagrafu itp.
+\makeatletter
+	\renewcommand\@seccntformat[1]{\csname the#1\endcsname.\quad}
+	\renewcommand\numberline[1]{#1.\hskip0.7em}
+\makeatother
+
+% Kropka po numerze tablicy, rysunku i ustawienie czcionki dla etykiety.
+\captionsetup{labelfont=sc,labelsep=period}
+
+% Numeracja wzorów według paragrafu.
+\renewcommand{\theequation}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+
+\renewcommand{\thesubsection}{\alph{subsection}}
+\renewcommand{\thesubsubsection}{\Roman{subsubsection}}
+
+% Zmiana nazwy figure "Rysunek" -> "Wykres"
+\renewcommand{\figurename}{Wykres}
+
+% Środowisko definition z numeracją
+\newtheorem{definition}{Definicja}
+\newtheorem{theorem}{Twierdzenie}
+
+
+\date{Warszawa, \today r.}
+\begin{document}
+\maketitle
+
+\section{Opis merytoryczny zadania}
+
+Zadanie polega na opracowaniu i zaimplementowaniu algorytmu
+wyznaczania składowych częściowo spójnych w zadanym grafie
+skierowanym. Wejście programu stanowić będzie opis tekstowy grafu w
+następującym formacie:
+
+\begin{itemize}
+\item Linia zawierająca liczbę całkowitą N stanowiącą liczbę wierzchołków grafu.
+\item N linii zawierających liczby całkowite, które stanowią numery
+  wierzchołków do których wychodzą krawędzie z danego wierzchołka
+\end{itemize}
+
+Dla wygody wczytywania i prostoty implementacji zakładamy, ze
+pojedyncza linia mieści się w buforze o rozmiarze 4096 bajtów.
+
+Wyjście programu będzie stanowić M linii, z których każda będzie
+zawierała liczby naturalne stanowiące numery wierzchołków, które
+wchodzą w skład danej składowej częściowo spójnej (jedna składowa,
+jedna linia).
+
+\section{Opis wykorzystywanych algorytmów}
+
+Jako podstawę do rozwiązania tego problemu planujemy wykorzystać
+algorytm {\it STRONGLY-CONNECTED-COMPONENTS} opisany w
+\cite[rozdz. 23.5]{Cormen}. Jest to algorytm, który wykorzystuje przeszukiwanie
+grafu w głąb. Po przeszukaniu grafu oraz grafu transponowanego w głąb
+otrzymujemy podział grafu na składowe silnie spójne. Oznacza to, że z
+dowolnego wierzchołka v w takiej składowej istnieje ścieżka do
+dowolnego wierzchołka u oraz powrotna.
+
+Dzięki zastosowaniu tego algorytmu możemy utworzyć graf G', w którym
+wierzchołki będą stanowiły składowe silnie spójne. Krawędź w takim
+grafie będzie łączyła dwa wierzchołki, jeśli w grafie G istniała
+krawędź pomiędzy dowolnymi dwoma wierzchołkami łącząca te dwie składowe.
+
+Istotną własnością zbudowanego w ten sposób grafu jest jego
+acykliczność. Graf ten nie może posiadać cyklu, ponieważ jego
+istnienie implikowałoby istnienie ścieżki z dowolnego wierzchołka
+jednej składowej do dowolnego wierzchołka innej składowej (składowych)
+co z kolei oznaczałoby, że cały ten cykl stanowi jedną składową silnie
+spójną.
+
+Ostatnim krokiem algorytmu będzie wyszukanie wszystkich najdłuższych
+ścieżek w takim grafie.
+
+\begin{thebibliography}{9}
+\bibitem{Cormen} T.H. Cormen, C.E. Leiserson, R.L. Rivest, \emph{Wprowadzenie do algorytmów}, Wydawnictwo Naukowo-Techniczne, Warszawa 2001.
+\end{thebibliography}
+\end{document}
+
