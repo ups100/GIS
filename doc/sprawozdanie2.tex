@@ -1,0 +1,57 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[]{polski}
+\usepackage{a4wide}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{longtable}
+
+\title{{\textbf{Grafy i Sieci}}\\[1ex]
+       {\Large Sprawozdanie 2}\\[-1ex]
+       {\Large Projekt - Graf częściowo spójne}}
+\author{Krzysztof Opasiak, Adrian Brzozowski}
+
+% Kropka po numerze paragrafu, podparagrafu itp.
+\makeatletter
+	\renewcommand\@seccntformat[1]{\csname the#1\endcsname.\quad}
+	\renewcommand\numberline[1]{#1.\hskip0.7em}
+\makeatother
+
+% Kropka po numerze tablicy, rysunku i ustawienie czcionki dla etykiety.
+\captionsetup{labelfont=sc,labelsep=period}
+
+% Numeracja wzorów według paragrafu.
+\renewcommand{\theequation}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+
+\renewcommand{\thesubsection}{\alph{subsection}}
+\renewcommand{\thesubsubsection}{\Roman{subsubsection}}
+
+% Zmiana nazwy figure "Rysunek" -> "Wykres"
+\renewcommand{\figurename}{Wykres}
+
+% Środowisko definition z numeracją
+\newtheorem{definition}{Definicja}
+\newtheorem{theorem}{Twierdzenie}
+
+
+\date{Warszawa, \today r.}
+\begin{document}
+\maketitle
+
+\section{Algorytm}
+
+\subsection{Szczegółowy opis}
+\subsection{Wykazanie poprawności}
+\subsection{Możliwe zastosowania}
+\subsection{Dowód zadanego twierdzenia}
+\section{Program}
+\subsection{Podstawowe założenia}
+\subsection{Projekt testów}
+
+\end{document}
+
