@@ -10,6 +10,10 @@
 \usepackage{listings}
 \usepackage{multirow}
 \usepackage{longtable}
+\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage{algpseudocode}
+\usepackage{enumerate}
 
 \title{{\textbf{Grafy i Sieci}}\\[1ex]
        {\Large Sprawozdanie 2}\\[-1ex]
@@ -28,8 +32,8 @@
 % Numeracja wzorów według paragrafu.
 \renewcommand{\theequation}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
 
-\renewcommand{\thesubsection}{\alph{subsection}}
-\renewcommand{\thesubsubsection}{\Roman{subsubsection}}
+%\renewcommand{\thesubsection}{\alph{subsection}}
+%\renewcommand{\thesubsubsection}{\Roman{subsubsection}}
 
 % Zmiana nazwy figure "Rysunek" -> "Wykres"
 \renewcommand{\figurename}{Wykres}
@@ -44,14 +48,225 @@
 \maketitle
 
 \section{Algorytm}
-
 \subsection{Szczegółowy opis}
+
+Pierwszym krokiem algorytmu wyznaczania składowych częściowo spójnych
+grafu jest wyznaczenie jego składowych silnie spójnych.
+
+\subsubsection{Wyznaczenie silnie spójnych składowych}
+Do wyznaczenie składowych silnie spójnych wykorzystano algorytm
+Kosaraju. Algorytm ten składa się z dwóch kroków. Pierwszym z nich
+jest transpozycja grafu i przejrzenie wszystkich jego wierzchołków
+używając algorytmu przeszukiwania w głąb i oznaczenie każdego
+wierzchołka liczbą mówiącą w jakiej kolejności został on w pełni
+przetworzony.
+
+\begin{algorithm}
+\caption{Oznaczenie wierzchołków}
+\begin{algorithmic}
+\State $t \leftarrow 0 $
+\State $ordered\_verticles[] \leftarrow empty[]$
+
+\Function{mark\_graph}{G}
+\State $G2 \leftarrow transpose(G)$
+\For{v in verticles(G2)}
+  \If{v not explored}
+    \State $mark\_node(G2, v)$
+  \EndIf
+\EndFor
+\EndFunction
+
+\Function{mark\_node}{G2, v}
+  \State mark v as explored
+  \For{e in edges\_from(G2, v)}
+    \State $dest \leftarrow destination(e)$
+    \If{dest not explored}
+      \State $mark\_node(G2, dest)$
+    \EndIf
+  \EndFor
+  \State $ordered\_verticles[t] \leftarrow v$
+  \State $++t $
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Kolejnym i ostatnim krokiem algorytmu Kosaraju jest przejrzenie grafu
+w kolejności malejących oznaczeń i wyznaczenie składowych silnie
+spójnych poprzez wyznaczenie algorytmem przeszukiwania w głąb
+wszystkich wierzchołków osiągalnych z rozważanego wierzchołka.
+
+\begin{algorithm}
+\caption{Wyznaczanie silnie spójnych składowych}
+\begin{algorithmic}
+\State $current\_scc \leftarrow NULL $
+
+\Function{find\_all\_scc}{G}
+\State $scc[] \leftarrow empty[]$
+\For{v decreasing in ordered\_verticles}
+  \If{v not explored}
+    \State $current\_scc \leftarrow new\_scc() $
+    \State $mark\_scc(G, v)$
+    \State $append(scc, current\_scc)$
+  \EndIf
+\EndFor\\
+\Return scc
+\EndFunction
+
+\Function{mark\_scc}{G, v}
+  \State mark v as explored
+  \State $append(current\_scc, v)$
+  \For{e in edges\_from(G, v)}
+    \State $dest \leftarrow destination(e)$
+    \If{dest not explored}
+      \State $mark\_scc(G, dest)$
+    \EndIf
+  \EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Po wykonaniu omówionych kroków otrzymamy podział grafu na składowe
+silnie spójne.
+
+\subsubsection{Utworzenie metagrafu}
+
+Kolejnym krokiem algorytmu jest utworzenie metagrafu na podstawia
+grafu G i jego podziału na składowe silnie spójne. W powstałym
+metagrafie wierzchołki odpowiadają poszczególnym składowym silnie
+spójnym. Ponadto krawędź w metagrafie miedzy wierzchołkami A i B
+wystąpi jeśli dowolny z wierzchołków składowej A jest połączony z
+dowolnym wierzchołkiem składowej B.
+
+Zgodnie z algorytmem wyznaczania składowych silnie spójnych mamy
+pewność, ze powstały w ten sposób metagraf jest acykliczny ponieważ
+jeśli istniałby cykl to wierzchołki znalazłyby się w jednej składowej
+silnie spójnej.
+
+\subsubsection{Wyznaczenie składowych częściowo spójnych}
+
+Składowe częściowo spójne można w prosty sposób uzyskać z metagrafu
+poprzez wyznaczenie w nim wszystkich maksymalnych ścieżek. Ścieżki te
+można wyznaczyć poprzez przeszukiwanie metagrafu i odnalezienie w nim
+wszystkich wierzchołków, które nie posiadają krawędzi wchodzących. Dla
+każdego z takich wierzchołków należy przeprowadzić przeszukiwanie w
+głąb. Jeśli w trakcie tego przeszukiwania znajdziemy się w
+wierzchołku, który nie ma krawędzi wychodzących to odnaleźliśmy
+kolejną składową częściowo spójną.
+
+\begin{algorithm}
+\caption{Wyznaczanie składowych częściowo spójnych}
+\begin{algorithmic}
+\State $current\_wcc \leftarrow NULL $
+\State $wcc[] \leftarrow empty[] $
+
+\Function{find\_all\_wcc}{MG}
+\For{v in verticles(MG)}
+  \If{v doesn't have incomming edges}
+    \State $current\_wcc \leftarrow new\_wcc() $
+    \State $mark\_wcc(MG, v)$
+  \EndIf
+\EndFor\\
+\Return wcc
+\EndFunction
+
+\Function{mark\_wcc}{G, v}
+  \State $append(current\_wcc, v)$
+  \State $out\_edges = edges\_from(G, v)$
+  \If{out\_edges is empty}
+    \State $append(wcc, clone(current\_wcc))$
+    \State $remove(current\_wcc, v)$
+
+    \Return
+  \EndIf
+
+  \For{e in out\_edges}
+    \State $dest \leftarrow destination(e)$
+    \State $mark\_wcc(G, dest)$
+  \EndFor
+
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+Omówiony powyżej krok stanowi już ostatnią część algorytmu. Po jego
+wykonaniu uzyskujemy wszystkie częściowo spójne składowe co powoduje
+zakończenie algorytmu.
+
 \subsection{Wykazanie poprawności}
+\subsection{Złożoność czasowa}
+Algorytm składa się z kroków o następującej złożoności:
+
+
+\subsubsection{Algorytm Kosaraju}
+\begin{center}
+{\large\bf O(m + n)}
+\end{center}
+
+Algorytm ten wykonuje dwa pełne przeglądy grafy G używając metody
+przeszukiwania w głąb. Metoda ta gwarantuje odwiedzenie wszystkich
+wierzchołków jeden raz.
+
+\subsubsection{Utworzenie metagrafu}
+\begin{center}
+{\large\bf O(m + n)}
+\end{center}
+
+W tym kroku algorytmu musimy przejrzeć ponownie wszystkie wierzchołki i
+krawędzie aby utworzyć krawędzie metagrafu.
+
+\subsubsection{Wyszukanie najdłuższych ścieżek}
+\begin{center}
+{\large\bf O(m2 + n2) gdzie m2 $\leq$ m, n2 $\leq$ n}
+\end{center}
+
+W tym kroku musimy odwiedzić wszystkie wierzchołki metagrafu i przejrzeć
+wszystkie jego krawędzie. Koszt takiej operacji jest liniowy względem
+liczby wierzchołków (i krawędzi) metagrafu, których jest tyle ile
+składowych silnie spójnych więc nie więcej niż wierzchołków w grafie
+wejściowym.
+
+\subsubsection{Ogólna złożoność}
+\begin{center}
+{\large\bf O(m + n)}
+\end{center}
+
+Czynnikiem o najwyższym koszcie jest w tym algorytmie wyznaczenie
+składowych silnie spójnych, zatem złożoność całego algorytmu jest
+równa temu najwyższemu czynnikowi.
+
 \subsection{Możliwe zastosowania}
 \subsection{Dowód zadanego twierdzenia}
 \section{Program}
 \subsection{Podstawowe założenia}
+\begin{itemize}
+\item Program pobiera dane wejściowe poprzez standardowe wejście
+\item Dane wejściowe programu mają następujący format:
+  \begin{itemize}
+  \item Linia zawierająca liczbę całkowitą N stanowiącą liczbę wierzchołków grafu.
+  \item N linii zawierających liczby całkowite, które stanowią numery
+    wierzchołków do których wychodzą krawędzie z danego wierzchołka
+  \end{itemize}
+\item Jedna linia jest nie dłuższa niż 4096 znaków (dla wygody wczytywania)
+\item Wyjście programu będzie stanowić M linii, z których każda będzie
+  zawierała liczby naturalne stanowiące numery wierzchołków, które
+  wchodzą w skład danej składowej częściowo spójnej (jedna składowa,
+  jedna linia).
+\item Program zostanie zaimplementowany w języku C lub C++
+\end{itemize}
+
 \subsection{Projekt testów}
+
+Testy programu będą się składać z dwóch etapów. Pierwszy etap będą to
+deterministyczne testy na kilku przygotowanych uprzednio grafach, dla
+których podział na składowe częściowo spójne został wykonany inny
+programem lub ręcznie. W trakcie tego etapu sprawdzamy czy
+wygenerowane przez program składowe częściowo spójne pokrywają się z
+tymi wyznaczonymi inną metodą. Drugi etap testów będą stanowiły testy
+niedeterministyczne. Dla kilkunastu losowych grafów zostanie
+uruchomiony algorytm, a następnie sprawdzone zostanie czy wygenerowane
+składowe częściowo spójne spełniają warunek bycia poprawną składową
+częściowo spójną.
 
 \end{document}
 
