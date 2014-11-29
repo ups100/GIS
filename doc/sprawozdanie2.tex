@@ -15,6 +15,9 @@
 \usepackage{algpseudocode}
 \usepackage{enumerate}
 
+\newtheorem{twr}{Twierdzenie}
+\newtheorem{lem}[twr]{Lemat}
+
 \title{{\textbf{Grafy i Sieci}}\\[1ex]
        {\Large Sprawozdanie 2}\\[-1ex]
        {\Large Projekt - Graf częściowo spójne}}
@@ -194,6 +197,109 @@ wykonaniu uzyskujemy wszystkie częściowo spójne składowe co powoduje
 zakończenie algorytmu.
 
 \subsection{Wykazanie poprawności}
+
+Poprawność algorytmu Kosaraju jak i sam algorytm został opisany w
+\cite[rozdz. 23.5]{Cormen}. Ponadto opis ten zawiera dowód, iż
+metagraf skonstrułowany po wyznaczeniu składowych silnie spójnych
+będzie grafem acyklicznym. Brakującym elementem do udowodnienia
+poprawności całego algorytmu jest wykazanie, że w ostatnim kroku
+algorytmu zostaną wygenerowane wszystkie składowe częściowo spójne.
+
+Dowód poprawności algorytmu rozpoczniemy od następującej obserwacji:
+
+\begin{lem}
+\label{silnie czesciowo}
+Każda składowa silnie spójna jest również częściowo spójna.
+\end{lem}
+
+\begin{proof}
+  Dowód tego lematu jest trywialny. Aby podgraf nie był częściowo
+  spójny musi istnieć w nim para wierzchołków dla której nie ma ścieżki
+  w dowolną stronę. Załóżmy więc, że dla pewnej pary wierzchołków u i v
+  ze składowej spójnej nie istnieje ścieżka z u do v oraz z v do
+  u. Dochodzimy automatycznie do sprzeczności, gdyż w składowej
+  spójnej musi dla każdej pary wierzchołków istnieć ścieżka z u do v
+  jak i z v do u.
+\end{proof}
+
+\begin{lem}
+\label{sciezka}
+  Graf jest częściowo spójny, jeśli zawiera skierowaną ścieżkę
+  przechodzącą przez co najmniej jeden wierzchołek każdej z jego
+  składowej silnie spójnej.
+\end{lem}
+
+\begin{proof}
+  Na podstawie \label{silnie czesciowo} wiemy, że każda ze składowych
+  silnie spójnych jest również częściowo spójna. Dodatkowym założeniem
+  wprowadzanym w \label{sciezka} jest istnienie skierowanej ścieżki
+  zawierającej co najmniej jeden wierzchołek z każdej silnie spójnej
+  składowej. Weźmy zatem dwa dowolne wierzchołki u i v. Wierzchołki te
+  mogą być wzajemnie w trzech różnych położeniach:
+  \begin{description}
+  \item[u i v są w tej samej silnie spójnej składowej.] W silnie
+    spójnej składowej istnieje ścieżka z u do v jak i z v do u co nie
+    potrzebuje dalszego dowodu.
+  \item[u i v są w różnych składowych i znajdują się na ścieżce
+    łączącej składowe.] Skro u oraz v znajdują się na pewnej
+    skierowanej ścieżce co automatycznie oznacza, że ścieżka pomiędzy
+    tymi wierzchołkami istnieje.
+  \item[u i v są w różnych składowych i nie znajdują się na ścieżce
+    łączącej składowe.] Wierzchołki te nie znajdują się na wspólnej
+    ścieżce ale składowej do której należy wierzchołek u znajduje się
+    pewien wierzchołek w, który leży na tej ścieżce. Analogicznie w
+    składowej w której znajduje się wierzchołek v jest pewien
+    wierzchołek x, który leży na ścieżce. Zatem mamy pewne wierzchołki
+    x oraz w zawierają się w skierowanej ścieżce łączącej wszystkie
+    składowe spójne. Ponieważ w znajduje się w tej samej silnie
+    spójnej składowej co u to istnieje ścieżka prowadząca od w do u i
+    odwrotnie. Analogicznie dla wierzchołków v i x. Oznacza to, że
+    możemy utworzyć ścieżkę z u do v, która będzie prowadziła przez
+    wierzchołki w i x.
+  \end{description}
+  Ponieważ wyczerpaliśmy już wszystkie możliwości i pokazaliśmy, że w
+  każdej z nich można utworzyć skierowaną ścieżkę pomiędzy dowolnymi
+  dwoma wierzchołkami (w co najmniej jedną ze stron) udowodniliśmy, że
+  graf ten jest częściowo spójny.
+\end{proof}
+
+Powyższe lematy oraz dowody pokazują, że graf częściowo spójny może
+zostać uzyskany poprzez połączenie skierowaną ścieżką dowolnych
+wierzchołków z składowych silnie spójnych. Zadanie natomiast dotyczy
+znalezienia maksymalnych takich podgrafów. W przyjętym metamodelu
+każda składowa silnie spójna jest reprezentowana przez jeden
+wierzchołek zatem należy jeszcze wykazać, w jaki sposób można
+wyznaczyć wszystkie najdłuższe ścieżki w grafie acyklicznym.
+
+\begin{lem}
+\label{sciezki_acykl}
+W grafie acyklicznym można wyznaczyć wszystkie najdłuższe ścieżki
+poprzez przeszukiwanie grafu w głąb rozpoczynając przeszukiwanie od
+wszystkich wierzchołków, które nie posiadają krawędzi wchodzących.
+\end{lem}
+
+\begin{proof}
+  Z własności grafu acyklicznego wynika, że w każdym takim grafie musi
+  istnieć co najmniej jeden wierzchołek nie posiadających krawędzi
+  wchodzących jak i co najmniej jeden wierzchołek nie posiadający
+  krawędzi wychodzących. Ponadto wiadomym jest, że ze względu na
+  acykliczność grafu podczas przeszukiwania grafu w głąb (od pewnego
+  punktu) nigdy nie trafimy do wierzchołka, który już został
+  odwiedzony. Natomiast ze względu na przeszukiwanie grafu w głąb mamy
+  gwarancję odwiedzenia wszystkich wierzchołków osiągalnych z
+  wybranego wierzchołka startowego. Najdłuższe możliwe ścieżki
+  uzyskujemy gdy rozpoczynając przeszukiwanie od wierzchołka v, który
+  nie ma krawędzi wchodzących dojdziemy do pewnego wierzchołka u, z
+  którego nie możemy już iść dalej. Ponieważ v nie ma krawędzi
+  wchodzących, a u wychodzących to nie jest możliwe, aby znaleziona
+  ścieżka w całości znajdowała się w innej ścieżce o większej
+  długości.
+\end{proof}
+
+Wykorzystując powyższe lematy udowodniono, że zastosowany algorytm
+jest poprawny i znajdzie on wszystkie maksymalne częściowo spójne
+podgrafy.
+
 \subsection{Złożoność czasowa}
 Algorytm składa się z kroków o następującej złożoności:
 
@@ -236,7 +342,62 @@ składowych silnie spójnych, zatem złożoność całego algorytmu jest
 równa temu najwyższemu czynnikowi.
 
 \subsection{Możliwe zastosowania}
+
+Podział na składowe częściowo spójne możemy wykorzystać do szybkiego
+określenie czy graf może posiadać cykl Hamiltona. Ponieważ jest to
+problem NP-zupełny to wykorzystując zależność, że każdy graf
+Hamiltonowski musi być jedną składową częściowo spójną możemy w czasie
+liniowym określić, że jeśli graf ma więcej niż jedną składową
+częściowo spójną to na pewno nie ma cyklu Hamiltona (Oczywiście
+implikacja w drugą stronę nie jest prawdziwa).
+
+Ponadto możemy użyć tego podziału do określenia jaką największą liczbę
+wierzchołków możemy odwiedzić startując z jednego dowolnego
+punktu. Może to być przydatne we wszystkich problemach związanych z
+problemem komiwojażera. Pozwala to np bardzo prosto powiedzieć, że nie
+da się odwiedzić wszystkich wierzchołków, a także wskazać którą
+podgrupę wierzchołków najbardziej opłaca się rozważać aby odwiedzić
+ich jak najwięcej.
+
 \subsection{Dowód zadanego twierdzenia}
+
+\begin{twr}
+  Graf G = (V, E) jest częściowo spójny wtedy i tylko wtedy, gdy
+  zawiera skierowaną ścieżkę zawierającą wszystkie wierzchołki ze
+  zbioru V.
+\end{twr}
+
+\begin{proof}
+  Dowód w lewo jest trywialny. Jeśli istnieje ścieżka, która zawiera
+  wszystkie wierzchołki grafu to oznacza, że dowolna para wierzchołków
+  tego grafu znajduje się na tej ścieżce. Implikuje to, że każda para
+  wierzchołków jest ze sobą połączona i osiągalna w co najmniej jedna
+  ze stron. Powyższe stanowi definicję grafu częściowo spójnego zatem
+  dowód w lewo zakończony.
+
+  Dowód w prawo. Załóżmy, że istnieje w G taki wierzchołek v, że nie
+  można go dodać, do ścieżki przechodzącej przez wszystkie
+  wierzchołki. Oznacza to jedna z poniższych sytuacji:
+
+  \begin{description}
+  \item[v jest wierzchołkiem swobodnym] Jeśli nie posiada on krawędzi
+    wchodzących jak i wychodzących to owszem nie można poprowadzić
+    przez niego ścieżki, jednak powoduje to również sprzeczność bo G
+    nie może być częściowo spójny
+  \item[v nie jest jedynym wierzchołkiem, który posiada jedynie
+    krawędzie wychodzące] Oznacza to sytuacje, w której w grafie g
+    istnieje para wierzchołków u i v, które posiadają jedynie
+    krawędzie wychodzące. Doprowadza to do sprzeczności z założeniem,
+    że graf jest częściowo spójny ponieważ między u i v nie da się
+    wyznaczyć żadnej ścieżki.
+    \item[v nie jest jedynym wierzchołkiem, który posiada jedynie
+    krawędzie wchodzące] W sposób analogiczne sytuacja doprowadza nas do sprzeczności
+  \end{description}
+
+  We wszystkich pozostałych przypadkach odpowiednią ścieżkę da się w
+  sposób oczywisty poprowadzić również przez v.
+\end{proof}
+
 \section{Program}
 \subsection{Podstawowe założenia}
 \begin{itemize}
@@ -268,5 +429,10 @@ uruchomiony algorytm, a następnie sprawdzone zostanie czy wygenerowane
 składowe częściowo spójne spełniają warunek bycia poprawną składową
 częściowo spójną.
 
+\end{document}
+
+\begin{thebibliography}{9}
+\bibitem{Cormen} T.H. Cormen, C.E. Leiserson, R.L. Rivest, \emph{Wprowadzenie do algorytmów}, Wydawnictwo Naukowo-Techniczne, Warszawa 2001.
+\end{thebibliography}
 \end{document}
 
