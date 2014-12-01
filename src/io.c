@@ -130,7 +130,7 @@ int read_graph(int fd, int ***graph)
 	}
 
 	*graph = g;
-	return 0;
+	return n_verticles;
 
 free_memory:
 	for (i = 0; g[i]; ++i)

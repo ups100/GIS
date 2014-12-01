@@ -24,15 +24,15 @@ void print_help()
 int main(int argc, char **argv)
 {
 	int **graph;
-	int ret = -EINVAL;
+	int size = -EINVAL;
 
 	if (argv[1] &&
 	    (strcmp(argv[1], "-h") || strcmp(argv[1], "--help")))
 		goto exit_help;
 
 	    
-	ret = read_graph(0, &graph);
-	if (ret)
+	size = read_graph(0, &graph);
+	if (size < 0)
 		goto exit_help;
 
 	print_graph(graph);
@@ -40,6 +40,6 @@ int main(int argc, char **argv)
 	return 0;
 exit_help:
 	print_help();
-	return ret;
+	return size;
 }
 		
