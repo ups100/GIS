@@ -24,28 +24,32 @@ void print_help()
 
 int main(int argc, char **argv)
 {
-	int **graph, **t_graph;
-	int size = -EINVAL;
+	int **graph, **wccs;
+	int ret = -EINVAL;
 
 	if (argv[1] &&
 	    (strcmp(argv[1], "-h") || strcmp(argv[1], "--help")))
 		goto exit_help;
 
 	    
-	size = read_graph(0, &graph);
-	if (size < 0)
+	ret = read_graph(0, &graph);
+	if (ret < 0)
 		goto exit_help;
 
-	print_graph(graph);
+	wccs = generate_wccs(graph, ret);
+	if (!wccs) {
+		ret = -EINVAL;
+		goto out;
+	}
 
-	t_graph = kosoraju(graph, size);
-	print_graph(t_graph);
+	print_graph(wccs);
 
-	free_graph(t_graph);
+	free_graph(wccs);
+out:
 	free_graph(graph);
-	return 0;
+	return ret;
 exit_help:
 	print_help();
-	return size;
+	return ret;
 }
 		
