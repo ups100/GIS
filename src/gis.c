@@ -3,6 +3,7 @@
 #include <errno.h>
 
 #include "io.h"
+#include "algorithm.h"
 
 void print_help()
 {
@@ -23,7 +24,7 @@ void print_help()
 
 int main(int argc, char **argv)
 {
-	int **graph;
+	int **graph, **t_graph;
 	int size = -EINVAL;
 
 	if (argv[1] &&
@@ -36,6 +37,11 @@ int main(int argc, char **argv)
 		goto exit_help;
 
 	print_graph(graph);
+
+	t_graph = kosoraju(graph, size);
+	print_graph(t_graph);
+
+	free_graph(t_graph);
 	free_graph(graph);
 	return 0;
 exit_help:
