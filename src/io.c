@@ -148,6 +148,8 @@ void free_graph(int **graph)
 		return;
 	for (g = graph; *g; ++g)
 		free(*g);
+
+	free(graph);
 }
 
 void print_graph(int **graph)
