@@ -195,7 +195,7 @@ static int **paths_to_wccs(int **paths, int **sccs)
     for (i = 0; i < n_paths; ++i) {
         n = 0;
         for (j = 0; paths[i][j] >= 0; ++j) {
-            for (k = 0; sccs[j][k] >= 0; ++k) {
+            for (k = 0; sccs[paths[i][j]][k] >= 0; ++k) {
                 ret[i][n++] = sccs[paths[i][j]][k];
             }
         }
