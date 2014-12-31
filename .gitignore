@@ -1,0 +1,14 @@
+.gitignore~
+
+# C/C++ objects and libs
+*.o
+*.h~
+*.c~
+*.cpp~
+
+#git
+*.orig
+
+#cmake
+CMakeLists.txt.user
+CMakeCache.txt
