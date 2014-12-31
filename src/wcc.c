@@ -60,9 +60,11 @@ static int **generate_meta_graph(int **g, int size, int **sccs, int n_sccs, int 
         n = 0;
         for (j = 0; sccs[i][j] >= 0; ++j) {
             int node = sccs[i][j];
-            for (k = 0; g[node][k] >= 0; ++k)
-                if (v_to_scc[node] != v_to_scc[g[node][k]])
+            for (k = 0; g[node][k] >= 0; ++k) {
+                if (v_to_scc[node] != v_to_scc[g[node][k]]) {
                     mg[i][n++] = v_to_scc[g[node][k]];
+                }
+            }
         }
         mg[i][n] = -1;
     }
@@ -194,7 +196,7 @@ static int **paths_to_wccs(int **paths, int **sccs)
         n = 0;
         for (j = 0; paths[i][j] >= 0; ++j) {
             for (k = 0; sccs[j][k] >= 0; ++k) {
-                ret[i][n++] = sccs[i][k];
+                ret[i][n++] = sccs[paths[i][j]][k];
             }
         }
         ret[i][n] = -1;
