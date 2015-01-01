@@ -86,24 +86,38 @@ static int **graph = NULL;
 static void f_longest(int n)
 {
     int i;
+    int j;
 
     wcc[pos++] = n;
 
     /* if we have some edges we run DFS */
-    for (i = 0; graph[n][i] >= 0; ++i)
+    for (i = 0; graph[n][i] >= 0; ++i) {
         f_longest(graph[n][i]);
+    }
 
     /* That's end of our path */
     if (i == 0) {
-        wcc[pos++] = -1;
-        wccs[counter] = calloc(pos, sizeof(*wcc));
-        assert(wccs[counter]);
-        memcpy(wccs[counter], wcc, pos*sizeof(*wcc));
-        ++counter;
-        --pos;
+        int is_new_wcc = 1;
+        for (j = 0; j < counter; ++j) {
+            if (wccs[j][0] == wcc[0]) {
+                is_new_wcc = 0;
+                break;
+            }
+        }
+        if (is_new_wcc) {
+            wcc[pos++] = -1;
+            wccs[counter] = calloc(pos, sizeof(*wcc));
+            assert(wccs[counter]);
+
+            memcpy(wccs[counter], wcc, pos*sizeof(*wcc));
+            ++counter;
+
+            --pos;
+        }
     }
 
     --pos;
+
     return;
 }
 
@@ -121,6 +135,7 @@ static int **find_longest(int **mg, int size)
     wccs = calloc(size + 1, sizeof(*wccs));
     if (!wccs)
         goto out;
+
     /* wcc is used as dirty buffer for current wcc construction */
     wcc = calloc(size + 1, sizeof(*wcc));
     if (!wcc)
@@ -131,12 +146,14 @@ static int **find_longest(int **mg, int size)
     if (!tmg)
         goto free_wcc;
 
-    for (i = 0; i < size; ++i)
+    for (i = 0; i < size; ++i) {
+
         /* if we don't have incomming edges */
         if (tmg[i][0] < 0) {
             pos = 0;
             f_longest(i);
         }
+    }
 
     free_graph(tmg);
     /* cleanup global variables */
@@ -182,10 +199,13 @@ static int **paths_to_wccs(int **paths, int **sccs)
 
     /* allocate the memory */
     for (i = 0; i < n_paths; ++i) {
+
         needed = 0;
-        for (j = 0; paths[i][j] >= 0; ++j)
-            for (k = 0; sccs[j][k] >= 0; ++k)
+        for (j = 0; paths[i][j] >= 0; ++j) {
+            for (k = 0; sccs[j][k] >= 0; ++k) {
                 ++needed;
+            }
+        }
 
         ret[i] = calloc(needed + 1, sizeof(**ret));
         if (!ret[i])
