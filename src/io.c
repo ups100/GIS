@@ -188,8 +188,10 @@ void free_graph(int **graph)
     int **g;
     if (!graph)
         return;
-    for (g = graph; *g; ++g)
+
+    for (g = graph; *g; ++g) {
         free(*g);
+    }
 
     free(graph);
 }

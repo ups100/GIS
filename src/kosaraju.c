@@ -187,7 +187,7 @@ static void gen_scc(int n)
 static int **generate_sccs(int **g, int size, int *order)
 {
     int **sccs = NULL;
-    int i, j;
+    int i, j, k;
 
     /* setup global variables */
     graph = g;
@@ -202,15 +202,17 @@ static int **generate_sccs(int **g, int size, int *order)
         goto cleanup;
 
 
-    for (i = size - 1, j = 0; i >= 0; --i)
+    for (i = size - 1, j = 0; i >= 0; --i) {
         if (!visited[order[i]]) {
             /* We use counter to count number of verticles in scc */
             counter = 0;
             gen_scc(order[i]);
             assert(counter == 0);
+
             sccs[j++] = scc;
             scc = NULL;
         }
+    }
 
 cleanup:
     free(visited);

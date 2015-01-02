@@ -83,10 +83,22 @@ static int counter = 0;
 static int pos = 0;
 static int **graph = NULL;
 
+int get_vector_size(int *vec)
+{
+    int i = 0;
+    int *v;
+
+    for (v = vec; *v; ++v)
+        ++i;
+
+    return i;
+}
+
 static void f_longest(int n)
 {
     int i;
     int j;
+    int k;
 
     wcc[pos++] = n;
 
@@ -99,11 +111,14 @@ static void f_longest(int n)
     if (i == 0) {
         int is_new_wcc = 1;
         for (j = 0; j < counter; ++j) {
-            if (wccs[j][0] == wcc[0]) {
-                is_new_wcc = 0;
-                break;
+            if (get_vector_size(wccs[j]) == get_vector_size(wcc)) {
+                if (memcmp(wcc, wccs[j], sizeof(wcc)) == 0) {
+                    is_new_wcc = 0;
+                    break;
+                }
             }
         }
+
         if (is_new_wcc) {
             wcc[pos++] = -1;
             wccs[counter] = calloc(pos, sizeof(*wcc));
@@ -273,3 +288,5 @@ out:
 
     return wccs;
 }
+
+

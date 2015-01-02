@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     int **wccs;
     int ret = -EINVAL; /// returned value
     int fd = 0;
-    //  fd = open("sample_data_test.txt", O_RDONLY);
+//    fd = open("sample_data_test.txt", O_RDONLY);
 
     if (argv[1] &&
             (strcmp(argv[1], "-h") || strcmp(argv[1], "--help")))
