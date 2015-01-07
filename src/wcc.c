@@ -83,13 +83,11 @@ static int counter = 0;
 static int pos = 0;
 static int **graph = NULL;
 
-int get_vector_size(int *vec)
+static int get_vector_size(int *vec)
 {
     int i = 0;
-    int *v;
 
-    for (v = vec; *v; ++v)
-        ++i;
+    for (i=0; vec[i] >= 0; ++i);
 
     return i;
 }
