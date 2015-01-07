@@ -109,8 +109,10 @@ static void f_longest(int n)
     if (i == 0) {
         int is_new_wcc = 1;
         for (j = 0; j < counter; ++j) {
-            if (get_vector_size(wccs[j]) == get_vector_size(wcc)) {
-                if (memcmp(wcc, wccs[j], sizeof(wcc)) == 0) {
+		/* pos is equivalent of get_vector_size(wcc) but
+		   doesn't need to be -1 terminated */
+            if (get_vector_size(wccs[j]) == pos) {
+                if (memcmp(wcc, wccs[j], pos*sizeof(*wcc)) == 0) {
                     is_new_wcc = 0;
                     break;
                 }
