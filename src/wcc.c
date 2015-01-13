@@ -92,11 +92,19 @@ static int get_vector_size(int *vec)
     return i;
 }
 
+static int compare (const void * a, const void * b)
+{
+    return ( *(int*)a - *(int*)b );
+}
+
+#include "io.h"
+
 static void f_longest(int n)
 {
     int i;
     int j;
     int k;
+    int l;
 
     wcc[pos++] = n;
 
@@ -107,19 +115,74 @@ static void f_longest(int n)
 
     /* That's end of our path */
     if (i == 0) {
-        int is_new_wcc = 1;
-        for (j = 0; j < counter; ++j) {
-		/* pos is equivalent of get_vector_size(wcc) but
-		   doesn't need to be -1 terminated */
-            if (get_vector_size(wccs[j]) == pos) {
+        int is_new_in_wccs = 1;
+        for (j = 0; j < counter; ++j) {  /* by all wccs */
+            /* pos is equivalent of get_vector_size(wcc) but
+           doesn't need to be -1 terminated */
+            int vector_size = get_vector_size(wccs[j]);
+
+            if (vector_size == pos) {
                 if (memcmp(wcc, wccs[j], pos*sizeof(*wcc)) == 0) {
-                    is_new_wcc = 0;
-                    break;
+                    /* is the same */
+                    is_new_in_wccs = 0;
+                    break; /* end search */
+                }
+            }
+            else if (vector_size < pos) { /* new greater */
+                int is_cand_cont_wcc = 1;
+                for (k = 0; k < vector_size; ++k) { /* by all elements j wcc */
+                    int temp_wcc_v = wccs[j][k];
+                    int is_new_v_in_wcc = 0;
+                    for (l = 0; l  < pos; ++l) { /* by all elements wcc candidat */
+                        if(wcc[l] == temp_wcc_v) {
+                            is_new_v_in_wcc = 1;
+                            break; /* go check next element j wcc */
+                        }
+                    }
+                    if (is_new_v_in_wcc == 0) {
+                        is_cand_cont_wcc = 0;
+                        break;  /* j wcc candidat not contains wcc */
+                    }
+                }
+                if (is_cand_cont_wcc == 1) { /* swap wcc */
+                    is_new_in_wccs = 0;
+
+                    wcc[pos++] = -1;
+                    wccs[j] = realloc(wccs[j], pos*sizeof(*wcc));
+                    memcpy(wccs[j], wcc, pos*sizeof(*wcc));
+
+                    --pos;
+
+                    break; /* go out */
+                }
+            }
+            else if (vector_size > pos) { /* new smaller */
+                int is_wcc_cont_cand = 1;
+                for (k = 0; k < pos; ++k) { /* by all elements wcc candidat */
+                    int temp_wcc_v =  wcc[k];
+                    int is_new_v_in_wcc = 0;
+                    for (l = 0; l < vector_size; ++l) { /* by all elements j wcc */
+                        if(wccs[j][l] == temp_wcc_v) {
+                            is_new_v_in_wcc = 1;
+                            break; /* go check next element wcc candidat */
+                        }
+                    }
+
+                    if (is_new_v_in_wcc == 0) {
+                        is_wcc_cont_cand = 0;
+                        break; /* go check next elemnt wcc candidat */
+                    }
+                }
+
+                if (is_wcc_cont_cand == 1) {
+                    is_new_in_wccs = 0;
+
+                    break; /* go out */
                 }
             }
         }
 
-        if (is_new_wcc) {
+        if (is_new_in_wccs) {
             wcc[pos++] = -1;
             wccs[counter] = calloc(pos, sizeof(*wcc));
             assert(wccs[counter]);
