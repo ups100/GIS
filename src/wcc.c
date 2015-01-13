@@ -307,8 +307,6 @@ free_ret:
     return NULL;
 }
 
-#include <stdio.h>
-
 int **generate_wccs(int **g, int size)
 {
 

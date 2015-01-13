@@ -16,6 +16,7 @@ static int read_line_safe(int fd, char *buf, int size)
 
     for (i = 0; i < size - 2; ++i) {
         ret = read(fd, &(buf[i]), 1);
+        if (ret == 0) { buf[i] = ' '; return ret; }
         if (ret < 1)
             return -errno;
         if (buf[i] == '\n')
@@ -33,6 +34,7 @@ static int count_conn(char *buf)
     int n_elem = 0;
 
     for (i = 0; buf[i] != '\0';) {
+
         while (buf[i] != '\0' && isspace(buf[i]))
             ++i;
 
