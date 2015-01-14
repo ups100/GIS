@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     int ret = -EINVAL; /// returned value
     int fd = 0;
     struct timeval begin, end;
-//    fd = open("sample_data12.txt", O_RDONLY);
+    //    fd = open("sample_data6.txt", O_RDONLY);
 
     if (argv[1] &&
             (strcmp(argv[1], "-h") || strcmp(argv[1], "--help")))
