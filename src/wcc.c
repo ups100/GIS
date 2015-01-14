@@ -212,6 +212,7 @@ static void f_longest(int n)
             ++counter;
             --pos;
         }
+	free(cand_new_wcc);
     }
 
     --pos;
