@@ -6,3 +6,6 @@ void free_graph(int **graph);
 
 int read_graph(int fd, int ***graph);
 
+int get_number_edges(int **graph);
+
+int get_number_vertices(int **graph);

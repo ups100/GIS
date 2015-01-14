@@ -5,6 +5,9 @@
 #include "io.h"
 #include "algorithm.h"
 
+typedef struct timeval timeval;
+
+void saveResults(timeval begin, timeval end, int nbv, int nbe);
 void print_help()
 {
     fprintf(stderr,
@@ -30,7 +33,8 @@ int main(int argc, char **argv)
     int **wccs;
     int ret = -EINVAL; /// returned value
     int fd = 0;
-    fd = open("sample_data10.txt", O_RDONLY);
+    struct timeval begin, end;
+//    fd = open("sample_data12.txt", O_RDONLY);
 
     if (argv[1] &&
             (strcmp(argv[1], "-h") || strcmp(argv[1], "--help")))
@@ -41,13 +45,18 @@ int main(int argc, char **argv)
     if (ret < 0)
         goto exit_help;
 
+    gettimeofday(&begin, NULL);
+
     wccs = generate_wccs(graph, ret);
     if (!wccs) {
         ret = -EINVAL;
         goto out;
     }
 
-    print_graph(wccs);
+    gettimeofday(&end, NULL);
+    saveResults(begin, end, get_number_vertices(graph), get_number_edges(graph));
+
+    //    print_graph(wccs);
 
     free_graph(wccs);
 out:
@@ -58,3 +67,14 @@ exit_help:
     return ret;
 }
 
+void saveResults(timeval begin, timeval end, int nbv, int nbe)
+{
+    FILE *fp = fopen("output.txt","a+");
+    if (fp == NULL) perror ("Error opening file");
+    else {
+        fprintf(fp, "%d ", nbv);
+        fprintf(fp, "%d ", nbe);
+        fprintf(fp,"%f\n", (double)((end.tv_sec - begin.tv_sec) + (end.tv_usec - begin.tv_usec) * 0.000001));
+        fclose(fp);
+    }
+}

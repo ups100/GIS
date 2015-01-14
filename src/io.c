@@ -224,3 +224,26 @@ void print_vector_with_end(int *vector)
     }
     putchar('\n');
 }
+
+int get_number_edges(int **graph)
+{
+    int **g;
+    int *v;
+    int i = 0;
+    for (g = graph; *g; ++g)
+        for (v = *g; *v >= 0; ++v)
+            ++i;
+
+    return i;
+}
+
+int get_number_vertices(int **graph)
+{
+    int **g;
+    int i = 0;
+
+    for (g = graph; *g; ++g)
+        ++i;
+
+    return i;
+}
