@@ -6,7 +6,7 @@ do
 	counterIn=$2
 	while [ $counterIn -ge 0 ]
 	do
-	./gisgraphgen.0.1.1 "-v" "$counterOut" "-e" "$counterIn"
+	./graphgen "-v" "$counterOut" "-e" "$counterIn"
 	   counterIn=$(( $counterIn - 1 ))
 	done
 	counterOut=$(( $counterOut - 1 ))

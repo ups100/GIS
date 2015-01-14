@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/time.h>
 
 #include "io.h"
 #include "algorithm.h"
@@ -33,7 +34,7 @@ int main(int argc, char **argv)
     int **wccs;
     int ret = -EINVAL; /// returned value
     int fd = 0;
-    struct timeval begin, end;
+    timeval begin, end;
     //    fd = open("sample_data6.txt", O_RDONLY);
 
     if (argv[1] &&

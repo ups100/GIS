@@ -53,7 +53,7 @@
 \section{Testy}
 \subsection{Sprawdzenie poprawności}
 
-Poprawność zaimplementowanego algorytmu wykazano na podstawie ręcznego przeliczenia uprzednio przygotowanych grafów.
+Poprawność zaimplementowanego algorytmu wykazano na podstawie ręcznego przeliczenia uprzednio przygotowanych grafów.\\
 
 Testy wykonywane były wedle następujących kroków:
 \begin{enumerate}
@@ -63,6 +63,7 @@ Testy wykonywane były wedle następujących kroków:
 \item Porównanie wyników
 \end{enumerate}
 
+\subsection{Testy deterministyczne}
 \subsubsection{Wyniki testów}
 
 \begin{center}
@@ -193,10 +194,8 @@ Testy wykonywane były wedle następujących kroków:
 }
 &\includegraphics[width=3 cm]{sample_data7}&
 \shortstack[l]{
-3\\
-0 1 3\\
-0 2 1 3\\
-0 2 3
+1\\
+0 2 1 3
 }
 &OK\\ \hline
 
@@ -228,8 +227,7 @@ Testy wykonywane były wedle następujących kroków:
 }
 &\includegraphics[width=3 cm]{sample_data9}&
 \shortstack[l]{
-2\\
-6 0 3 5 1\\
+1\\
 6 2 4 0 3 5 1 
 }
 &OK\\ \hline
@@ -255,9 +253,186 @@ Testy wykonywane były wedle następujących kroków:
 \subsubsection{Wnioski}
 Na podstawie powyższych wyników można stwierdzić poprawność działania algorytmu. Tym samym stwierdzamy, że wyznaczane prze algorytm składowe częściowo spójne spełniają warunek bycia poprawną składową częściowo spójną.
 
+\subsection{Testy niedeterministyczne}
 
-\subsection{Określenie złożoności algorytmu}
+W tej części testów wymagane było napisanie programu generującego losowe grafy. Na podstawie wybranej próbki 5 grafów stwierdzono poprawność generowania składowych częściowo spójnych.\\
 
+Do testów posłużyły następujące grafy:
+\begin{center}
+\begin{tabular}{|l|c|l|l|}\hline
+{\bf Dane wejściowe}&{\bf Graf}&{\bf Dane wyjściowe}&{\bf Test}\\ \hline
+
+\shortstack[l]{
+7\\
+2 3 4 \\
+3 1 \\
+1 6 \\
+2 \\
+6 0 \\
+3 
+}
+&\includegraphics[height=6 cm]{graph_7_11}&
+\shortstack[l]{
+2\\
+5 1 3 2 6 \\
+0 4 1 3 2 6 
+}
+&OK\\ \hline
+
+\shortstack[l]{
+8\\
+3 \\
+\\
+4 6 0 \\
+4 \\
+7 \\
+\\
+2 \\
+1 
+}
+&\includegraphics[height=6 cm]{graph_8_8}&
+\shortstack[l]{
+2\\
+5 \\
+2 6 0 3 4 7 1 
+}
+&OK\\ \hline
+
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|c|l|l|}\hline
+{\bf Dane wejściowe}&{\bf Graf}&{\bf Dane wyjściowe}&{\bf Test}\\ \hline
+
+\shortstack[l]{
+9\\
+7 \\
+\\
+8 \\
+8 \\
+7 \\
+8 \\
+\\
+7 \\
+8 
+}
+&\includegraphics[height=6 cm]{graph_9_7}&
+\shortstack[l]{
+7\\
+6 \\
+5 8 \\
+4 7 \\
+3 8 \\
+2 8 \\
+1 \\
+0 7 
+}
+&OK\\ \hline
+
+\shortstack[l]{
+9\\
+7 \\
+8 5 \\
+8 3 \\
+8 6 3 \\
+7 3 \\
+8 1 5 \\
+2 \\
+7 \\
+8 2 8 
+}
+&\includegraphics[width=3 cm]{graph_9_18}&
+\shortstack[l]{
+3\\
+4 2 3 6 7 \\
+1 5 7 \\
+0 7 
+}
+&OK\\ \hline
+
+\shortstack[l]{
+10\\
+4 \\
+3 7 \\
+0 9 7 \\
+4 2 5 \\
+7 0 \\
+5 \\
+8 \\
+3 3 \\
+5 4 9 \\
+4 7 
+}
+&\includegraphics[width=3 cm]{graph_10_20}&
+\shortstack[l]{
+2\\
+6 8 0 4 7 3 2 9 5 \\
+1 0 4 7 3 2 9 5 
+}
+&OK\\ \hline
+
+\end{tabular}
+\end{center}
+
+\subsection{Określenie złożoności czasowej algorytmu}
+Do określenia złożoności czasowej algorytmu napisano:
+
+\begin{enumerate}
+\item Program do generowania losowych grafów
+\item Skrypt generujący zadaną próbkę grafów
+\item Skrypt wykonujący testy złożoności czasowej algorytmu
+\end{enumerate}
+
+Złożoność algorytmiczną wyznaczono na podstawie 7343 próbek.\\
+Dane maszyny na której dokonywano obliczeń:
+
+\begin{itemize}
+\item Architecture: $x86\_64$
+\item CPU op-mode(s): $32-bit, 64-bit$
+\item CPU(s): 2
+\item Vendor ID: GenuineIntel
+\item Model name: Pentium(R) Dual-Core CPU T4500 @ 2.30GHz
+\end{itemize}
+
+Na systemie: Linux $3.15.7-1-ARCH x86\_64 GNU/Linux.$ \\
+
+Program do generowania grafów zawiera się w poniższym algorytmie:
+
+\begin{algorithm}
+\caption{Generowanie grafów}
+\begin{algorithmic}
+\State $number\_edges$
+\State $number\_vertices$
+\Function{generate\_graph}{G}
+\While{true}
+\For{v in verticles(G)}
+	\For{v in verticles(G)}
+	  \If{  $rand() \bmod\; 2 == 1$}
+    	\State $create\_edge\_to$ $rand()\bmod\; number\_vertices$
+    	  \State $++t $
+	  \If{$ t == number\_edges$}
+    	  \State $end $    	  
+	  \EndIf      	  
+	  \EndIf  
+	\EndFor
+\EndFor
+\EndWhile
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Umożliwia on generowanie grafów o zadanej liczbie wierzchołków oraz krawędzi, generując także wszystkie grafy mniejsze tz. z mniejszą liczbą wierzchołków oraz krawędzi.
+
+\includegraphics[width=12 cm]{Graph1}
+
+
+Powyższy wykres ukazuje rozkład próbek,w zależności od liczby krawędzi plus liczba wierzchołków danego grafu do czasu przetwarzania danego grafu w celu wyznaczenia jego składowych częściowo spójnych.\\
+
+Uwidocznia się tutaj złożoność wielomianowa zaimplementowanego algorytmu. Stwierdzono, że najlepszym przybliżeniem będzie wielomian drugiego stopnia, którego wzór ma następującą postać:
+$$
+y(x) = 0,00462-4,5203E-5*x+1,2478E-8*x^2
+$$
 
 \end{document}
 
